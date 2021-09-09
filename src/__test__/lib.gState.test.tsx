@@ -6,35 +6,41 @@ import ReactDOM from "react-dom";
 import { g, useKey } from "@/lib/gState";
 import { sleep } from "@/lib";
 
-test("abc", () => {
-  function C1() {
-    useKey("a", "c1");
-    useEffect(() => {
-      expect("c1").toEqual(g.a);
-    }, [g.a]);
-    return <div>c1</div>;
-  }
-  function App({ expect }: { expect: jest.Expect }) {
-    useKey("a", 2);
-    expect(2).toEqual(g.a);
+test(
+  "abc",
+  async () => {
+    function C1() {
+      useKey("a", "c1");
+      useEffect(() => {
+        console.log("C1 useEffect", g.a);
+      }, [g.a]);
+      return <div>c1</div>;
+    }
+    function App({ expect }: { expect: jest.Expect }) {
+      useKey("a", 2);
+      console.log("App", g.a);
 
-    g.a = 3;
-    expect(3).toEqual(g.a);
+      useEffect(() => {
+        console.log("App useEffect", g.a);
 
-    useEffect(() => {
-      expect("c1").toEqual(g.a);
-    }, [g.a]); //, ...Array.from(g.stateMap.a)
+        // - after line will redraw, like setState(g.a)
+        g.a = 3;
+      }, [g.a]); //, ...Array.from(g.stateMap.a)
 
-    return (
-      <div>
-        <C1 />
-      </div>
-    );
-  }
-  const div = document.createElement("div");
-  ReactDOM.render(<App expect={expect} />, div);
-  ReactDOM.unmountComponentAtNode(div);
-});
+      return (
+        <div>
+          <C1 />
+        </div>
+      );
+    }
+    const div = document.createElement("div");
+    ReactDOM.render(<App expect={expect} />, div);
+    await sleep(400);
+    ReactDOM.unmountComponentAtNode(div);
+    await sleep(600);
+  },
+  2 * 1000
+);
 
 test(
   "C1 memo",
@@ -92,5 +98,5 @@ test(
     ReactDOM.unmountComponentAtNode(div);
     await sleep(600);
   },
-  2 * 1000,
+  2 * 1000
 );

@@ -24,7 +24,8 @@
     "react-router-dom": "^5.3.0",
     "recoil": "^0.4.1",
     "uuid": "^8.3.2",
-    "vue": "^3.2.9"
+    "vue": "^3.2.9",
+    "watsen_log": "^1.0.3"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.14.1",
