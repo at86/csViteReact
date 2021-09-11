@@ -65,10 +65,10 @@ export function useKey<T>(
   }
 
   useEffect(() => {
-    console.log(`g.stateMap set of ${key}`, g.stateMap[key].size);
+    // console.log(`g.stateMap set of ${key}`, g.stateMap[key].size);
     return () => {
       g.stateMap[key].delete(setT);
-      console.log(`g.stateMap delete of ${key}`, g.stateMap[key].size);
+      // console.log(`g.stateMap delete of ${key}`, g.stateMap[key].size);
     };
   }, [setT]);
 
