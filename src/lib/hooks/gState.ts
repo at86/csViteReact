@@ -6,50 +6,54 @@ interface gBasic {
 }
 
 // interface gType extends gBasic, Record<string, any> {}
-// export var g: gType = {
-// export var g: gBasic & Record<GKey, GKeyValue> = {
-export var g: gBasic & Record<PropertyKey, any> = {
+// export var gState: gType = {
+// export var gState: gBasic & Record<GKey, GKeyValue> = {
+export var gState: gBasic & Record<PropertyKey, any> = {
   stateMap: {},
   value: {},
 };
 
-// type GKey = Parameters<typeof useKey>[0];
-// type GKeyValue = Parameters<typeof useKey>[1];
+// type GKey = Parameters<typeof useGState>[0];
+// type GKeyValue = Parameters<typeof useGState>[1];
 
 // @ts-ignore
-window.g = g;
+window.gState = gState;
 
-export function useKey<T>(
+export function useGState<T>(
   key: string,
   v?: T
 ): [T, React.Dispatch<React.SetStateAction<T>>] {
-  const [t, setT] = useState(v || (g.value[key] as T));
+  const [t, setT] = useState(v || (gState.value[key] as T));
+  console.log("useGState()", t, v);
   //React.Dispatch<React.SetStateAction<T>>
-  if (!g.stateMap[key]) {
-    g.stateMap[key] = new Set();
+  if (!gState.stateMap[key]) {
+    gState.stateMap[key] = new Set();
   }
 
   const wrapSetT: React.Dispatch<React.SetStateAction<T>> = (v) => {
-    g.stateMap[key].forEach((f: React.Dispatch<React.SetStateAction<T>>) => {
-      g.value[key] = v;
-      f(v);
-    });
+    gState.stateMap[key].forEach(
+      (f: React.Dispatch<React.SetStateAction<T>>) => {
+        gState.value[key] = v;
+        f(v);
+      }
+    );
   };
 
-  if (!g.stateMap[key].has(setT)) {
+  if (!gState.stateMap[key].has(setT)) {
     // when record state, record value, not fire other states with `key`.
-    g.value[key] = t;
-    g.stateMap[key].add(setT);
+    gState.value[key] = t;
+    console.log("useGState()", t, "000");
+    gState.stateMap[key].add(setT);
 
-    if (g[key] === undefined) {
-      // Object.defineProperty(g, key, {
-      defineProperty(g, key, {
+    if (gState[key] === undefined) {
+      // Object.defineProperty(gState, key, {
+      defineProperty(gState, key, {
         get: function (): T {
-          return g.value[key];
+          return gState.value[key];
         },
         set: function (v: T) {
-          g.value[key] = v;
-          g.stateMap[key].forEach(
+          gState.value[key] = v;
+          gState.stateMap[key].forEach(
             (f: React.Dispatch<React.SetStateAction<T>>) => {
               f(v);
             }
@@ -65,10 +69,10 @@ export function useKey<T>(
   }
 
   useEffect(() => {
-    // console.log(`g.stateMap set of ${key}`, g.stateMap[key].size);
+    // console.log(`gState.stateMap set of ${key}`, gState.stateMap[key].size);
     return () => {
-      g.stateMap[key].delete(setT);
-      // console.log(`g.stateMap delete of ${key}`, g.stateMap[key].size);
+      gState.stateMap[key].delete(setT);
+      // console.log(`gState.stateMap delete of ${key}`, gState.stateMap[key].size);
     };
   }, [setT]);
 
@@ -113,12 +117,12 @@ function defineProperty<
 }
 
 // function aa(k: string) {
-//   defineProperty(g, k, {
+//   defineProperty(gState, k, {
 //     get: function (): string {
-//       return g.value[k];
+//       return gState.value[k];
 //     },
 //     set: function (v: string) {
-//       g.value[k] = v;
+//       gState.value[k] = v;
 //     },
 //     configurable: true,
 //     //- true: object.keys can get
@@ -128,4 +132,4 @@ function defineProperty<
 //   });
 // }
 // aa("b");
-// g.b;
+// gState.b;

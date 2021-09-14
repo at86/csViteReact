@@ -1,5 +1,10 @@
 module.exports = {
   verbose: true,
+
+  //atdo next two `config` is rfc not real.
+  // showConsoleMessageOrigin: false, // Simply dont show the origin of console message,
+  // consoleOutputTemplate: "console.{typeMessage}\n{message} at {lineNumber}",
+
   testEnvironment: "jsdom", //node
   /**
    * @jest-environment jsdom

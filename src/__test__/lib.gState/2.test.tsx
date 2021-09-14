@@ -2,7 +2,7 @@
  * @jest-environment jsdom
  */
 import { useEffect, memo } from "react";
-import { g, useKey } from "@/lib/gState";
+import { gState, useGState } from "@/lib/hooks/gState";
 import { sleep, useRef2 } from "@/lib";
 
 import { render, fireEvent, waitFor, screen } from "@testing-library/react";
@@ -14,7 +14,7 @@ test(
   async () => {
     type Val = { f: string; v: string };
     function C1() {
-      const [st, setSt] = useKey<Val>("a");
+      const [st, setSt] = useGState<Val>("a");
       const r = useRef2(0);
       if (r() === 0) {
         expect(st.f).toEqual("App");
@@ -23,18 +23,18 @@ test(
       }
       return (
         <div>
-          {JSON.stringify(g.a)}
+          {JSON.stringify(gState.a)}
           c1
         </div>
       );
     }
     const C1M = memo(C1);
     function App() {
-      const [st, setSt] = useKey<Val>("a", { f: "App", v: "App 1" });
+      const [st, setSt] = useGState<Val>("a", { f: "App", v: "App 1" });
 
       return (
         <div onClick={() => setSt({ ...st, v: "22" })}>
-          {JSON.stringify(g.a)}
+          {JSON.stringify(gState.a)}
           <C1M />
         </div>
       );

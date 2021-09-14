@@ -1,9 +1,0 @@
-yarn add --dev @babel/preset-typescript
-babel-jest
-
-ts-jest
-
-
-
-
-

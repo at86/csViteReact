@@ -1,3 +1,5 @@
 export { default as sleep } from "./util/sleep";
 
-export { default as useRef2 } from "./hooks/useRef2";
+export { useRef2, useGRef } from "./hooks/useRef2";
+
+export { gState, useGState } from "./hooks/gState";
